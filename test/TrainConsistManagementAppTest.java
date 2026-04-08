@@ -1,80 +1,64 @@
-// Test Class
 import org.junit.jupiter.api.Test;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+import java.util.ArrayList;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TrainConsistManagementAppTest {
 
-    @Test
-    void testRegex_ValidTrainID() {
-        String input = "TRN-1234";
-        Pattern p = Pattern.compile("TRN-\\d{4}");
-        Matcher m = p.matcher(input);
-        assertTrue(m.matches());
-    }
+    static class GoodsBogie {
+        String type;
+        String cargo;
 
-    @Test
-    void testRegex_InvalidTrainIDFormat() {
-        String[] inputs = {"TRAIN12", "TRN12A", "1234-TRN"};
-        Pattern p = Pattern.compile("TRN-\\d{4}");
-        for (String input : inputs) {
-            Matcher m = p.matcher(input);
-            assertFalse(m.matches());
+        GoodsBogie(String type, String cargo) {
+            this.type = type;
+            this.cargo = cargo;
         }
     }
 
     @Test
-    void testRegex_ValidCargoCode() {
-        String input = "PET-AB";
-        Pattern p = Pattern.compile("PET-[A-Z]{2}");
-        Matcher m = p.matcher(input);
-        assertTrue(m.matches());
+    void testSafety_AllBogiesValid() {
+        List<GoodsBogie> bogies = new ArrayList<>();
+        bogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        bogies.add(new GoodsBogie("Box", "Coal"));
+        boolean isSafe = bogies.stream()
+                .allMatch(b -> !b.type.equals("Cylindrical") || b.cargo.equals("Petroleum"));
+        assertTrue(isSafe);
     }
 
     @Test
-    void testRegex_InvalidCargoCodeFormat() {
-        String[] inputs = {"PET-ab", "PET123", "AB-PET"};
-        Pattern p = Pattern.compile("PET-[A-Z]{2}");
-        for (String input : inputs) {
-            Matcher m = p.matcher(input);
-            assertFalse(m.matches());
-        }
+    void testSafety_CylindricalWithInvalidCargo() {
+        List<GoodsBogie> bogies = new ArrayList<>();
+        bogies.add(new GoodsBogie("Cylindrical", "Coal"));
+        boolean isSafe = bogies.stream()
+                .allMatch(b -> !b.type.equals("Cylindrical") || b.cargo.equals("Petroleum"));
+        assertFalse(isSafe);
     }
 
     @Test
-    void testRegex_TrainIDDigitLengthValidation() {
-        String[] inputs = {"TRN-123", "TRN-12345"};
-        Pattern p = Pattern.compile("TRN-\\d{4}");
-        for (String input : inputs) {
-            Matcher m = p.matcher(input);
-            assertFalse(m.matches());
-        }
+    void testSafety_NonCylindricalBogiesAllowed() {
+        List<GoodsBogie> bogies = new ArrayList<>();
+        bogies.add(new GoodsBogie("Box", "Coal"));
+        bogies.add(new GoodsBogie("Rectangular", "Grain"));
+        boolean isSafe = bogies.stream()
+                .allMatch(b -> !b.type.equals("Cylindrical") || b.cargo.equals("Petroleum"));
+        assertTrue(isSafe);
     }
 
     @Test
-    void testRegex_CargoCodeUppercaseValidation() {
-        String[] inputs = {"PET-ab", "PET-Aa", "PET-aa"};
-        Pattern p = Pattern.compile("PET-[A-Z]{2}");
-        for (String input : inputs) {
-            Matcher m = p.matcher(input);
-            assertFalse(m.matches());
-        }
+    void testSafety_MixedBogiesWithViolation() {
+        List<GoodsBogie> bogies = new ArrayList<>();
+        bogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        bogies.add(new GoodsBogie("Cylindrical", "Coal"));
+        boolean isSafe = bogies.stream()
+                .allMatch(b -> !b.type.equals("Cylindrical") || b.cargo.equals("Petroleum"));
+        assertFalse(isSafe);
     }
 
     @Test
-    void testRegex_EmptyInputHandling() {
-        Pattern trainPattern = Pattern.compile("TRN-\\d{4}");
-        Pattern cargoPattern = Pattern.compile("PET-[A-Z]{2}");
-        assertFalse(trainPattern.matcher("").matches());
-        assertFalse(cargoPattern.matcher("").matches());
-    }
-
-    @Test
-    void testRegex_ExactPatternMatch() {
-        Pattern trainPattern = Pattern.compile("TRN-\\d{4}");
-        Pattern cargoPattern = Pattern.compile("PET-[A-Z]{2}");
-        assertFalse(trainPattern.matcher("TRN-1234X").matches());
-        assertFalse(cargoPattern.matcher("PET-ABX").matches());
+    void testSafety_EmptyBogieList() {
+        List<GoodsBogie> bogies = new ArrayList<>();
+        boolean isSafe = bogies.stream()
+                .allMatch(b -> !b.type.equals("Cylindrical") || b.cargo.equals("Petroleum"));
+        assertTrue(isSafe);
     }
 }

@@ -1,47 +1,42 @@
 import org.junit.jupiter.api.Test;
-import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TrainConsistManagementAppTest {
 
-    String[] sortBogieNames(String[] arr) {
-        String[] copy = arr.clone();
-        Arrays.sort(copy);
-        return copy;
+    boolean linearSearch(String[] arr, String key) {
+        for (String s : arr) {
+            if (s.equals(key)) return true;
+        }
+        return false;
     }
 
     @Test
-    void testSort_BasicAlphabeticalSorting() {
-        String[] arr = {"Sleeper","AC Chair","First Class","General","Luxury"};
-        String[] sorted = sortBogieNames(arr);
-        assertArrayEquals(new String[]{"AC Chair","First Class","General","Luxury","Sleeper"}, sorted);
+    void testSearch_BogieFound() {
+        String[] arr = {"BG101","BG205","BG309","BG412","BG550"};
+        assertTrue(linearSearch(arr, "BG309"));
     }
 
     @Test
-    void testSort_UnsortedInput() {
-        String[] arr = {"Luxury","General","Sleeper","AC Chair"};
-        String[] sorted = sortBogieNames(arr);
-        assertArrayEquals(new String[]{"AC Chair","General","Luxury","Sleeper"}, sorted);
+    void testSearch_BogieNotFound() {
+        String[] arr = {"BG101","BG205","BG309","BG412","BG550"};
+        assertFalse(linearSearch(arr, "BG999"));
     }
 
     @Test
-    void testSort_AlreadySortedArray() {
-        String[] arr = {"AC Chair","First Class","General"};
-        String[] sorted = sortBogieNames(arr);
-        assertArrayEquals(new String[]{"AC Chair","First Class","General"}, sorted);
+    void testSearch_FirstElementMatch() {
+        String[] arr = {"BG101","BG205","BG309","BG412","BG550"};
+        assertTrue(linearSearch(arr, "BG101"));
     }
 
     @Test
-    void testSort_DuplicateBogieNames() {
-        String[] arr = {"Sleeper","AC Chair","Sleeper","General"};
-        String[] sorted = sortBogieNames(arr);
-        assertArrayEquals(new String[]{"AC Chair","General","Sleeper","Sleeper"}, sorted);
+    void testSearch_LastElementMatch() {
+        String[] arr = {"BG101","BG205","BG309","BG412","BG550"};
+        assertTrue(linearSearch(arr, "BG550"));
     }
 
     @Test
-    void testSort_SingleElementArray() {
-        String[] arr = {"Sleeper"};
-        String[] sorted = sortBogieNames(arr);
-        assertArrayEquals(new String[]{"Sleeper"}, sorted);
+    void testSearch_SingleElementArray() {
+        String[] arr = {"BG101"};
+        assertTrue(linearSearch(arr, "BG101"));
     }
 }

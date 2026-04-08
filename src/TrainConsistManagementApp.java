@@ -1,43 +1,24 @@
 public class TrainConsistManagementApp {
 
-    static class CargoSafetyException extends RuntimeException {
-        CargoSafetyException(String message) {
-            super(message);
-        }
-    }
+    public static void main(String[] args) {
+        System.out.println("UC16 - Sort Passenger Bogies by Capacity (Bubble Sort)\n");
 
-    static class GoodsBogie {
-        String shape;
-        String cargo;
+        int[] capacities = {72, 56, 24, 70, 60};
 
-        GoodsBogie(String shape) {
-            this.shape = shape;
-        }
-
-        void assignCargo(String cargo) {
-            try {
-                if ("Rectangular".equals(shape) && "Petroleum".equals(cargo)) {
-                    throw new CargoSafetyException("Cannot assign Petroleum to Rectangular bogie");
+        for (int i = 0; i < capacities.length - 1; i++) {
+            for (int j = 0; j < capacities.length - 1 - i; j++) {
+                if (capacities[j] > capacities[j + 1]) {
+                    int temp = capacities[j];
+                    capacities[j] = capacities[j + 1];
+                    capacities[j + 1] = temp;
                 }
-                this.cargo = cargo;
-                System.out.println("Cargo assigned: " + cargo + " to " + shape + " bogie");
-            } catch (CargoSafetyException e) {
-                System.out.println("Error: " + e.getMessage());
-            } finally {
-                System.out.println("Cargo assignment validation completed for " + shape + " bogie\n");
             }
         }
-    }
 
-    public static void main(String[] args) {
-        System.out.println("UC15 - Safe Cargo Assignment Using try-catch-finally \n");
-
-        GoodsBogie b1 = new GoodsBogie("Cylindrical");
-        GoodsBogie b2 = new GoodsBogie("Rectangular");
-
-        b1.assignCargo("Petroleum");
-        b2.assignCargo("Petroleum");
-
-        System.out.println("UC15 cargo assignment completed ...");
+        System.out.print("Sorted Capacities: ");
+        for (int c : capacities) {
+            System.out.print(c + " ");
+        }
+        System.out.println("\n\nUC16 sorting completed ...");
     }
 }

@@ -3,78 +3,52 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TrainConsistManagementAppTest {
 
-    static class TrainConsistManagementAppInternal {
-
-        static class CargoSafetyException extends RuntimeException {
-            CargoSafetyException(String message) {
-                super(message);
-            }
-        }
-
-        static class GoodsBogie {
-            String shape;
-            String cargo;
-
-            GoodsBogie(String shape) {
-                this.shape = shape;
-            }
-
-            void assignCargo(String cargo) {
-                try {
-                    if ("Rectangular".equals(shape) && "Petroleum".equals(cargo)) {
-                        throw new CargoSafetyException("Cannot assign Petroleum to Rectangular bogie");
-                    }
-                    this.cargo = cargo;
-                } catch (CargoSafetyException e) {
-                    throw e;
-                } finally {
-                    // finally block executes always
+    int[] bubbleSort(int[] arr) {
+        int[] copy = arr.clone();
+        for (int i = 0; i < copy.length - 1; i++) {
+            for (int j = 0; j < copy.length - 1 - i; j++) {
+                if (copy[j] > copy[j + 1]) {
+                    int temp = copy[j];
+                    copy[j] = copy[j + 1];
+                    copy[j + 1] = temp;
                 }
             }
         }
+        return copy;
     }
 
     @Test
-    void testCargo_SafeAssignment() {
-        TrainConsistManagementAppInternal.GoodsBogie b = new TrainConsistManagementAppInternal.GoodsBogie("Cylindrical");
-        assertDoesNotThrow(() -> b.assignCargo("Petroleum"));
-        assertEquals("Petroleum", b.cargo);
+    void testSort_BasicSorting() {
+        int[] arr = {72, 56, 24, 70, 60};
+        int[] sorted = bubbleSort(arr);
+        assertArrayEquals(new int[]{24, 56, 60, 70, 72}, sorted);
     }
 
     @Test
-    void testCargo_UnsafeAssignmentHandled() {
-        TrainConsistManagementAppInternal.GoodsBogie b = new TrainConsistManagementAppInternal.GoodsBogie("Rectangular");
-        TrainConsistManagementAppInternal.CargoSafetyException exception =
-                assertThrows(TrainConsistManagementAppInternal.CargoSafetyException.class, () -> b.assignCargo("Petroleum"));
-        assertEquals("Cannot assign Petroleum to Rectangular bogie", exception.getMessage());
+    void testSort_AlreadySortedArray() {
+        int[] arr = {24, 56, 60, 70, 72};
+        int[] sorted = bubbleSort(arr);
+        assertArrayEquals(new int[]{24, 56, 60, 70, 72}, sorted);
     }
 
     @Test
-    void testCargo_CargoNotAssignedAfterFailure() {
-        TrainConsistManagementAppInternal.GoodsBogie b = new TrainConsistManagementAppInternal.GoodsBogie("Rectangular");
-        assertThrows(TrainConsistManagementAppInternal.CargoSafetyException.class, () -> b.assignCargo("Petroleum"));
-        assertNull(b.cargo);
+    void testSort_DuplicateValues() {
+        int[] arr = {72, 56, 56, 24};
+        int[] sorted = bubbleSort(arr);
+        assertArrayEquals(new int[]{24, 56, 56, 72}, sorted);
     }
 
     @Test
-    void testCargo_ProgramContinuesAfterException() {
-        TrainConsistManagementAppInternal.GoodsBogie b1 = new TrainConsistManagementAppInternal.GoodsBogie("Rectangular");
-        TrainConsistManagementAppInternal.GoodsBogie b2 = new TrainConsistManagementAppInternal.GoodsBogie("Cylindrical");
-
-        assertThrows(TrainConsistManagementAppInternal.CargoSafetyException.class, () -> b1.assignCargo("Petroleum"));
-        assertDoesNotThrow(() -> b2.assignCargo("Petroleum"));
-        assertEquals("Petroleum", b2.cargo);
+    void testSort_SingleElementArray() {
+        int[] arr = {50};
+        int[] sorted = bubbleSort(arr);
+        assertArrayEquals(new int[]{50}, sorted);
     }
 
     @Test
-    void testCargo_FinallyBlockExecution() {
-        TrainConsistManagementAppInternal.GoodsBogie b = new TrainConsistManagementAppInternal.GoodsBogie("Rectangular");
-        try {
-            b.assignCargo("Petroleum");
-        } catch (TrainConsistManagementAppInternal.CargoSafetyException e) {
-            // expected
-        } finally {
-            // code that runs regardless
-        }
+    void testSort_AllEqualValues() {
+        int[] arr = {40, 40, 40};
+        int[] sorted = bubbleSort(arr);
+        assertArrayEquals(new int[]{40, 40, 40}, sorted);
     }
 }
